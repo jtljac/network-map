@@ -6,12 +6,14 @@
     import forceAtlas2 from "graphology-layout-forceatlas2";
     import ForceSupervisor from 'graphology-layout-force/worker';
 
+    import {darkMode} from "$lib/dark-mode.js";
     import {NetworkComponent} from '$lib/network.js'
     import {ignoreForwards} from "$lib/stores.js";
 
-    import { onMount } from 'svelte';
+    import {onMount} from 'svelte';
 
     import Sidebar from "./sidebar.svelte";
+    import {drawLabel, drawHover} from "$lib/graph-utils.js";
 
     const urlParams = new URLSearchParams(window.location.search);
     const focus = urlParams.get("focus")
@@ -41,11 +43,30 @@
      * @type {Object<Number, NetworkComponent>}
      */
     let components = {
-        0: new NetworkComponent(0, "test0", null, false, [{device: 3, port: 0}, {device: 1, port: 1}, {device: 2, port: 0}, null]),
-        1: new NetworkComponent(1, "test1", null, false, [null, {device: 0, port: 1}, null, {device: 3, port: 1}]),
-        2: new NetworkComponent(2, "test2", "testGroup", false, [{device: 0, port: 2}, {device: 4, port: 0}, null, null]),
-        3: new NetworkComponent(3, "test3", "testGroup", false, [{device: 0, port: 2}, {device: 1, port: 3}, {device: 4, port:0}, null]),
-        4: new NetworkComponent(4, "test4", null, true, [[{device: 3, port: 2}, {device: 2, port: 1}]])
+        0: new NetworkComponent(0, "test0", {connections: [
+            {device: 3, port: 0},
+            {device: 1, port: 1},
+            {device: 2,port: 0},
+            null
+        ]}),
+        1: new NetworkComponent(1, "test1", {connections: [
+                null, {device: 0, port: 1}, null, {device: 3, port: 1}
+        ]}),
+        2: new NetworkComponent(2, "test2", {group: "testGroup", connections: [
+            {device: 0, port: 2},
+            {device: 4, port: 0},
+            null,
+            null
+        ]}),
+        3: new NetworkComponent(3, "test3", {group: "testGroup", connections: [
+            {device: 0, port: 2},
+            {device: 1, port: 3},
+            {device: 4, port: 0},
+            null
+        ]}),
+        4: new NetworkComponent(4, "test4", {forwarding: true, connections: [
+            [{device: 3, port: 2}, {device: 2, port: 1}]
+        ]})
     }
 
     /**
@@ -53,12 +74,6 @@
      * @type {?NetworkComponent}
      */
     let selectedComponent = null;
-
-    $: {
-        console.log(components);
-        console.log(selectedComponent);
-        components = components;
-    }
 
     /**
      * The currently hovered component
@@ -114,7 +129,7 @@
                 }
             }
         } else {
-            for (const {device, port} of hoveredComp.connections.filter(ele => ele !== null)) {
+            for (const {device, port} of hoveredComp.connections.filter((/** @type {ForeignPort} */ ele) => ele !== null)) {
                 const foreignComp = components[device];
                 if (!foreignComp) continue;
 
@@ -127,7 +142,7 @@
                 }
 
                 const forwardedConn = foreignComp.connections[port];
-                const forward = forwardedConn.find((conn) => conn != null && conn.device !== hoveredComp.id);
+                const forward = forwardedConn.find((/** @type {ForeignPort} */ conn) => conn != null && conn.device !== hoveredComp.id);
                 if (forward !== null) {
                     neighbours.push(forward.device);
                     const edge = graph.edge(foreignComp.id, forward.device);
@@ -169,10 +184,10 @@
     /*  Setup                                       */
     /* -------------------------------------------- */
 
-    function populateGraph() {
+    export function populateGraph() {
         // Edges must reference an existing node, so we have to populate the graph in two passes
         for (const [id, comp] of Object.entries(components)) {
-            graph.addNode(id, {label: comp.label, size: 50, color: comp.forwarding ? "#F00" : "#0F0"});
+            graph.addNode(id, {label: comp.toDisplayString(), size: 50, color: comp.forwarding ? "#F00" : "#0F0"});
         }
 
         for (const [id, comp] of Object.entries(components)) {
@@ -199,13 +214,16 @@
         layout.start();
     }
 
-    function setupGraphRenderer() {
+    export function setupGraphRenderer() {
         renderer = new Sigma(graph, sigmaContainer);
 
         // Listeners
         renderer.on("clickNode", ({node}) => clickListener(node))
         renderer.on("enterNode", ({node}) => hoverListener(node))
         renderer.on("leaveNode", () => unHoverListener())
+
+        renderer.setSetting("labelRenderer", (context, data, settings) => drawLabel(context, data, settings, $darkMode));
+        renderer.setSetting("hoverRenderer", (context, data, settings) => drawHover(context, data, settings, $darkMode))
 
         // Handle different rendering of nodes
         renderer.setSetting("nodeReducer", (node, data) => {
@@ -222,9 +240,9 @@
                 } else if (!neighbours.includes(comp.id)) {
                     res.label = "";
 
-                    res.color = "#F6F6F6";
+                    res.color = $darkMode ? "#202020" : "#F6F6F6";
                 } else if (comp.forwarding && $ignoreForwards) {
-                    res.color = "#FAA";
+                    res.color = $darkMode ? "#301212" : "#FAA";
                 }
             } else if (comp === selectedComponent) {
                 res.highlighted = true;

@@ -1,12 +1,21 @@
 <script>
+    import "$lib/app.less";
+
     import SvgIcon from '@jamescoyle/svelte-icon';
     import { mdiHome, mdiFloorPlan, mdiLan } from '@mdi/js';
+
+    import {darkMode} from "$lib/dark-mode.js";
+
+    function handleDarkMode() {
+        darkMode.toggle();
+    }
 </script>
 
 <nav>
     <a href="/"><SvgIcon type="mdi" path="{mdiHome}"/> Home</a>
     <a href="/phyiscal"><SvgIcon type="mdi" path="{mdiFloorPlan}"/> Floor Plan</a>
     <a href="/logical"><SvgIcon type="mdi" path="{mdiLan}"/> Logical Map</a>
+    <button on:click={handleDarkMode} />
 </nav>
 
 <slot></slot>

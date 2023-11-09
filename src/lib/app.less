@@ -1,0 +1,52 @@
+/**
+ * Creates 3 variables for the given colour
+ * One named ${name} set to the base colour
+ * One named ${name}-tint set to the base colour lightened by 10%
+ * One named ${name}-shade set to the base colour darkened by 10%
+ *
+ * Each variable will be in raw RGB components Notation, I.E: 172 33 24
+ * This allows the choice of using this in an rgb component or an rgba component
+ * @param name The base name of the colour variable
+ * @param colour The base colour of the variable in hex notation
+ */
+.colour-variants(@name, @colour) {
+    --@{name}: @colour;
+    @lighten: lighten(@colour, 10%);
+    --@{name}-tint: red(@lighten) green(@lighten) blue(@lighten);
+    @darken: darken(@colour, 10%);
+    --@{name}-shade: red(@darken) green(@darken) blue(@darken);
+}
+
+:root {
+    // Global
+    --theme-container-round: 8px;
+    --theme-component-round: 9999px;
+
+    .colour-variants(theme-colour-primary, #0081ce);
+    .colour-variants(theme-colour-secondary, #c64600);
+    .colour-variants(theme-colour-success, #009f0d);
+    .colour-variants(theme-colour-warn, #ffc409);
+    .colour-variants(theme-colour-error, #bd0000);
+
+    --theme-on-primary: 0 0 0; // Black
+    --theme-on-secondary: 255 255 255; // White
+    --theme-on-success: 0 0 0; // Black
+    --theme-on-warning: 0 0 0; // Black
+    --theme-on-error: 255 255 255; // White
+    --theme-on-surface: 255 255 255; // White
+
+    // Light theme
+    --theme-text-colour: 0 0 0; // Black
+    --theme-surface-colour: 255 255 255; // White
+
+    &.dark-mode {
+        --theme-text-colour: 255 255 255; // White
+        --theme-surface-colour: 18 18 18; // #121212
+    }
+}
+
+body {
+    background: rgb(var(--theme-surface-colour));
+    color: rgb(var(--theme-text-colour));
+    fill: rgb(var(--theme-text-colour));
+}
