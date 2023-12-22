@@ -5,6 +5,7 @@
     import { mdiHome, mdiFloorPlan, mdiLan } from '@mdi/js';
 
     import {darkMode} from "$lib/dark-mode.js";
+    import Button from "$lib/components/input/Button.svelte";
 
     function handleDarkMode() {
         darkMode.toggle();
@@ -15,7 +16,7 @@
     <a href="/"><SvgIcon type="mdi" path="{mdiHome}"/> Home</a>
     <a href="/phyiscal"><SvgIcon type="mdi" path="{mdiFloorPlan}"/> Floor Plan</a>
     <a href="/logical"><SvgIcon type="mdi" path="{mdiLan}"/> Logical Map</a>
-    <button on:click={handleDarkMode} />
+    <Button on:click={handleDarkMode} colour="contrast" outline={true}>test</Button>
 </nav>
 
 <slot></slot>
@@ -23,7 +24,8 @@
 <style lang="less">
     nav {
       display: flex;
-      align-content: flex-start;
+      justify-content: flex-start;
+      align-items: center;
 
       border-bottom: 1px black solid;
 

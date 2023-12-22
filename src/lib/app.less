@@ -10,7 +10,7 @@
  * @param colour The base colour of the variable in hex notation
  */
 .colour-variants(@name, @colour) {
-    --@{name}: @colour;
+    --@{name}: red(@colour) green(@colour) blue(@colour);
     @lighten: lighten(@colour, 10%);
     --@{name}-tint: red(@lighten) green(@lighten) blue(@lighten);
     @darken: darken(@colour, 10%);
@@ -22,24 +22,30 @@
     --theme-container-round: 8px;
     --theme-component-round: 9999px;
 
-    .colour-variants(theme-colour-primary, #0081ce);
-    .colour-variants(theme-colour-secondary, #c64600);
-    .colour-variants(theme-colour-success, #009f0d);
-    .colour-variants(theme-colour-warn, #ffc409);
-    .colour-variants(theme-colour-error, #bd0000);
+    .colour-variants(theme-colour-primary, #006bab);    // For most important Elements
+    .colour-variants(theme-colour-secondary, #c64600);  // For special elements
+    .colour-variants(theme-colour-success, #009f0d);    // For elements indicating success
+    .colour-variants(theme-colour-warn, #ffc409);       // For elements indicating warning
+    .colour-variants(theme-colour-error, #bd0000);      // For elements indicating errors
+    .colour-variants(theme-colour-contrast, #000000);   // For elements that need to be in contrast to the surface
 
-    --theme-on-primary: 0 0 0; // Black
+    --theme-on-primary: 255 255 255; // White
     --theme-on-secondary: 255 255 255; // White
     --theme-on-success: 0 0 0; // Black
     --theme-on-warning: 0 0 0; // Black
     --theme-on-error: 255 255 255; // White
     --theme-on-surface: 255 255 255; // White
+    --theme-on-contrast: 0 0 0; // black
 
     // Light theme
     --theme-text-colour: 0 0 0; // Black
     --theme-surface-colour: 255 255 255; // White
 
     &.dark-mode {
+        .colour-variants(theme-colour-contrast, #FFFFFF);
+
+        --theme-on-contrast: 255 255 255; // White
+
         --theme-text-colour: 255 255 255; // White
         --theme-surface-colour: 18 18 18; // #121212
     }
@@ -49,4 +55,147 @@ body {
     background: rgb(var(--theme-surface-colour));
     color: rgb(var(--theme-text-colour));
     fill: rgb(var(--theme-text-colour));
+}
+
+// Primary
+.primary {
+    background: rgb(var(--theme-colour-primary));
+    color: rgb(var(--theme-on-primary))
+}
+.primary-hover:hover {
+    background: rgb(var(--theme-colour-primary-shade));
+}
+
+.primary-outline {
+    color: rgb(var(--theme-colour-primary));
+    border: 1px rgb(var(--theme-colour-primary)) solid !important;
+    background-color: transparent;
+}
+
+.primary-outline.primary-hover:hover {
+    color: rgb(var(--theme-on-primary))
+}
+
+.dark-mode .primary-hover:hover {
+    background: rgb(var(--theme-colour-primary-tint));
+}
+
+// Secondary
+.secondary {
+    background: rgb(var(--theme-colour-secondary));
+    color: rgb(var(--theme-on-secondary))
+}
+
+.secondary-hover:hover {
+    background: rgb(var(--theme-colour-secondary-shade));
+}
+
+.secondary-outline {
+    color: rgb(var(--theme-colour-secondary));
+    border: 1px rgb(var(--theme-colour-secondary)) solid !important;
+    background-color: transparent;
+}
+
+.secondary-outline.secondary-hover:hover {
+    color: rgb(var(--theme-on-secondary))
+}
+
+.dark-mode .secondary-hover:hover {
+    background: rgb(var(--theme-colour-secondary-tint));
+}
+
+// success
+.success {
+    background: rgb(var(--theme-colour-success));
+    color: rgb(var(--theme-on-success))
+}
+
+.success-hover:hover {
+    background: rgb(var(--theme-colour-success-shade));
+}
+
+.success-outline {
+    color: rgb(var(--theme-colour-success));
+    border: 1px rgb(var(--theme-colour-success)) solid !important;
+    background-color: transparent;
+}
+
+.success-outline.success-hover:hover {
+    color: rgb(var(--theme-on-success))
+}
+
+.dark-mode .success-hover:hover {
+    background: rgb(var(--theme-colour-success-tint));
+}
+
+// warning
+.warning {
+    background: rgb(var(--theme-colour-warning));
+    color: rgb(var(--theme-on-warning))
+}
+
+.warning-hover:hover {
+    background: rgb(var(--theme-colour-warning-shade));
+}
+
+.warning-outline {
+    color: rgb(var(--theme-colour-warning));
+    border: 1px rgb(var(--theme-colour-warning)) solid !important;
+    background-color: transparent;
+}
+
+.warning-outline.warning-hover:hover {
+    color: rgb(var(--theme-on-warning))
+}
+
+.dark-mode .warning-hover:hover {
+    background: rgb(var(--theme-colour-warning-tint));
+}
+
+// error
+.error {
+    background: rgb(var(--theme-colour-error));
+    color: rgb(var(--theme-on-error))
+}
+
+.error-hover:hover {
+    background: rgb(var(--theme-colour-error-shade));
+}
+
+.error-outline {
+    color: rgb(var(--theme-colour-error));
+    border: 1px rgb(var(--theme-colour-error)) solid !important;
+    background-color: transparent;
+}
+
+.error-outline.error-hover:hover {
+    color: rgb(var(--theme-on-error))
+}
+
+.dark-mode .error-hover:hover {
+    background: rgb(var(--theme-colour-error-tint));
+}
+
+// Contrast
+.contrast {
+    background: rgb(var(--theme-colour-contrast));
+    color: rgb(var(--theme-on-contrast))
+}
+
+.contrast-hover:hover {
+    background: rgb(var(--theme-colour-contrast-tint));
+}
+
+.contrast-outline {
+    color: rgb(var(--theme-colour-contrast));
+    border: 1px rgb(var(--theme-colour-contrast)) solid !important;
+    background-color: transparent;
+}
+
+.contrast-outline.contrast-hover:hover {
+    color: rgb(var(--theme-on-contrast))
+}
+
+.dark-mode .contrast-hover:hover {
+    background: rgb(var(--theme-colour-contrast-shade));
 }
